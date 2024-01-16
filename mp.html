@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+        }
+
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        #music-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        #music-player {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        label {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        label:hover {
+            background-color: #2980b9;
+
+        audio {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #time-display {
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+
+        #speed-control {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ddd;
+        }
+
+        #speed-label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <video id="background-video" autoplay muted loop>
+
+        <source src="2.MP4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div id="music-container">
+        <div id="music-player">
+            <h1>Music Player</h1>
+            <input type="file" id="music-input" accept=".mp3, .ogg, .wav">
+            <label for="music-input">Choose a file</label>
+        </div>
+        <div id="time-display">Time: 0:00 / 0:00</div>
+        <audio id="audio-player" controls></audio>
+        <div id="speed-control">
+            <label id="speed-label" for="speed-range">Speed:</label>
+            <input type="range" id="speed-range" min="0.5" max="2" step="0.1" value="1">
+            <span id="speed-value">1x</span>
+        </div>
+    </div>
+
+    <script>
+        const audioPlayer = document.getElementById('audio-player');
+        const timeDisplay = document.getElementById('time-display');
+        const speedRange = document.getElementById('speed-range');
+        const speedValue = document.getElementById('speed-value');
+
+        document.getElementById('music-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                audioPlayer.src = objectURL;
+                audioPlayer.play();
+            }
+        });
+
+        audioPlayer.addEventListener('timeupdate', function() {
+            const currentTime = formatTime(audioPlayer.currentTime);
+            const duration = formatTime(audioPlayer.duration);
+            timeDisplay.textContent = `Time: ${currentTime} / ${duration}`;
+        });
+
+        speedRange.addEventListener('input', function() {
+            const speed = speedRange.value;
+            audioPlayer.playbackRate = speed;
+            speedValue.textContent = speed + 'x';
+        });
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+    </script>
+</body>
+</html>
